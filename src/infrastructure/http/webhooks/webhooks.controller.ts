@@ -40,14 +40,8 @@ export class WebhooksController {
             });
 
             return reply.code(200).send({
-                success: true,
                 message: 'Webhook processed successfully',
-                deliveryId: result.deliveryId,
-                orderId: result.orderId,
                 trackingNumber: result.trackingNumber,
-                provider: result.provider,
-                previousStatus: result.previousStatus,
-                updatedStatus: result.newStatus
             });
 
         } catch (err: any) {

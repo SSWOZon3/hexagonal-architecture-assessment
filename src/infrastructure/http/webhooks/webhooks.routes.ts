@@ -40,15 +40,8 @@ const webhooksRoutes: FastifyPluginAsync = async (app) => {
                 200: {
                     type: 'object',
                     properties: {
-                        success: { type: 'boolean' },
                         message: { type: 'string' },
-                        deliveryId: { type: 'string' },
-                        orderId: { type: 'string' },
                         trackingNumber: { type: 'string' },
-                        provider: { type: 'string' },
-                        previousStatus: { type: 'string' },
-                        updatedStatus: { type: 'string' },
-                        noChange: { type: 'boolean' }
                     }
                 },
                 400: {

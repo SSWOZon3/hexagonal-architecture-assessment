@@ -14,7 +14,6 @@ export class DeliveryPollingService {
             return;
         }
 
-        console.log('Starting delivery polling service...');
         this.intervalId = setInterval(() => {
             this.syncTrackingStatusesUseCase.execute().catch((error: any) => {
                 console.error('Error during delivery polling:', error);
