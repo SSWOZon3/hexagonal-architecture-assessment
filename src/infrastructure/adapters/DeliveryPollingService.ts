@@ -1,16 +1,11 @@
-import { DeliveryRepository } from '../../domain/repositories/DeliveryRepository';
-import { ShippingProvider, ProviderType } from '../../application/ports/ShippingProvider';
-import { UpdateDeliveryStatusUseCase } from '../../application/useCases/updateDeliveryStatus.useCase';
-import { DeliveryStatus } from '../../domain/entities/Delivery';
+import { SyncTrackingStatusesUseCase } from '../../application/useCases/syncTrackingStatusesUseCase';
 
 export class DeliveryPollingService {
     private intervalId: NodeJS.Timeout | null = null;
     private readonly POLLING_INTERVAL = 60 * 1000; // 1 minute in milliseconds
 
     constructor(
-        private readonly deliveryRepository: DeliveryRepository,
-        private readonly shippingProviders: ShippingProvider[],
-        private readonly updateDeliveryStatusUseCase: UpdateDeliveryStatusUseCase
+        private readonly syncTrackingStatusesUseCase: SyncTrackingStatusesUseCase
     ) { }
 
     start(): void {
@@ -21,13 +16,13 @@ export class DeliveryPollingService {
 
         console.log('Starting delivery polling service...');
         this.intervalId = setInterval(() => {
-            this.pollDeliveries().catch(error => {
+            this.syncTrackingStatusesUseCase.execute().catch((error: any) => {
                 console.error('Error during delivery polling:', error);
             });
         }, this.POLLING_INTERVAL);
 
         // Run immediately on start
-        this.pollDeliveries().catch(error => {
+        this.syncTrackingStatusesUseCase.execute().catch((error: any) => {
             console.error('Error during initial delivery polling:', error);
         });
     }
@@ -37,40 +32,6 @@ export class DeliveryPollingService {
             clearInterval(this.intervalId);
             this.intervalId = null;
             console.log('Delivery polling service stopped');
-        }
-    }
-
-    private async pollDeliveries(): Promise<void> {
-        const pollableDeliveryStatuses = [DeliveryStatus.PENDING, DeliveryStatus.CONFIRMED, DeliveryStatus.IN_TRANSIT];
-        // TODO: Create repository call to find deliveries by status and provider type
-        const deliveries = await this.deliveryRepository.findByStatus(pollableDeliveryStatuses);
-
-        for (const delivery of deliveries) {
-            const provider = this.shippingProviders.find(p => p.getName() === delivery.provider);
-
-            if (!provider || provider.getProviderType() !== ProviderType.POLLING || !provider.getTrackingStatus) {
-                continue;
-            }
-
-            try {
-                const trackingStatus = await provider.getTrackingStatus(delivery.trackingNumber);
-
-                if (trackingStatus.status !== delivery.status) {
-                    console.log(
-                        `Updating delivery ${delivery.trackingNumber} status: ${delivery.status} -> ${trackingStatus.status}`
-                    );
-
-                    await this.updateDeliveryStatusUseCase.execute({
-                        deliveryId: delivery.id,
-                        status: trackingStatus.status
-                    });
-                } else {
-                    console.log(`No status change for delivery ${delivery.trackingNumber}`);
-                }
-
-            } catch (error) {
-                console.error(`Error polling delivery ${delivery.trackingNumber}:`, error);
-            }
         }
     }
 }

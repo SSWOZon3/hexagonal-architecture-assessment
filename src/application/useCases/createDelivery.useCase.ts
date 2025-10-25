@@ -2,7 +2,7 @@ import { DeliveryRepository } from '../../domain/repositories/DeliveryRepository
 import { Delivery, DeliveryStatus, Address, CustomerInfo } from '../../domain/entities/Delivery';
 import { OrderId } from '../../domain/value-objects/OrderId';
 import { ShippingProviderSelector } from '../ports/ShippingProviderSelector';
-import { IdProvider } from '@application/ports/IdProvider';
+import { IdProvider } from '../../application/ports/IdProvider';
 
 export interface CreateDeliveryInput {
     orderId: string;

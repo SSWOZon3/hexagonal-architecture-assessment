@@ -2,6 +2,7 @@ import { CreateDeliveryUseCase } from '../../application/useCases/createDelivery
 import { GetDeliveryStatusUseCase } from '../../application/useCases/getDeliveryStatus.useCase';
 import { UpdateDeliveryStatusUseCase } from '../../application/useCases/updateDeliveryStatus.useCase';
 import { ProcessWebhookDeliveryStatusUseCase } from '../../application/useCases/processWebhookDeliveryStatus.useCase';
+import { SyncTrackingStatusesUseCase } from '../../application/useCases/syncTrackingStatusesUseCase';
 import { MongoDeliveryRepository } from '../repositories/MongoDeliveryRepository';
 import { ShippingProviderSelector as ShippingProviderSelectorAdapter } from '../adapters/shippingProviders/ShippingProviderSelector';
 import { ShippingProviderSelector } from '../../application/ports/ShippingProviderSelector';
@@ -20,6 +21,7 @@ export type AppContainer = {
             getDeliveryStatusUseCase: GetDeliveryStatusUseCase;
             updateDeliveryStatusUseCase: UpdateDeliveryStatusUseCase;
             processWebhookDeliveryStatusUseCase: ProcessWebhookDeliveryStatusUseCase;
+            syncTrackingStatusesUseCase: SyncTrackingStatusesUseCase;
         };
     };
     services: {
@@ -53,12 +55,16 @@ export function buildContainer(): AppContainer {
         updateDeliveryStatusUseCase
     );
 
+    const syncTrackingStatusesUseCase = new SyncTrackingStatusesUseCase(
+        deliveryRepository,
+        updateDeliveryStatusUseCase,
+        providerSelector
+    );
+
     const shippingProviders = providerSelector.getAllProviders();
 
     const deliveryPollingService = new DeliveryPollingService(
-        deliveryRepository,
-        shippingProviders,
-        updateDeliveryStatusUseCase
+        syncTrackingStatusesUseCase
     );
 
     return {
@@ -70,7 +76,8 @@ export function buildContainer(): AppContainer {
                 createDeliveryUseCase,
                 getDeliveryStatusUseCase,
                 updateDeliveryStatusUseCase,
-                processWebhookDeliveryStatusUseCase
+                processWebhookDeliveryStatusUseCase,
+                syncTrackingStatusesUseCase
             },
         },
         services: {
