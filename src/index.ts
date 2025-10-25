@@ -3,10 +3,10 @@ import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import deliveriesRoutes from './infrastructure/http/deliveries/deliveries.routes';
+import webhooksRoutes from './infrastructure/http/webhooks/webhooks.routes';
 import initMongoose, { closeMongoose } from './infrastructure/db/mongo/mongoose';
 import { buildContainer, AppContainer } from './infrastructure/config/container';
 
-// Extend FastifyInstance type to include our container
 declare module 'fastify' {
     interface FastifyInstance {
         container: AppContainer;
@@ -68,8 +68,17 @@ async function buildApp() {
     const container = buildContainer();
     fastify.decorate('container', container);
 
-    // Register routes
+    container.services.deliveryPollingService.start();
+
+    // Graceful shutdown
+    fastify.addHook('onClose', async () => {
+        container.services.deliveryPollingService.stop();
+    });
+
+
     await fastify.register(deliveriesRoutes, { prefix: '/deliveries' });
+    await fastify.register(webhooksRoutes, { prefix: '/webhooks' });
+
 
     return fastify;
 }
@@ -104,7 +113,7 @@ process.on('SIGINT', async () => {
     }
 });
 
-// TODO: Para qué?
+// TODO: Para qué
 if (require.main === module) {
     start();
 }

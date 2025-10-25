@@ -3,7 +3,6 @@ import { CreateDeliveryUseCase, CreateDeliveryInput } from '../../../application
 import { GetDeliveryStatusUseCase } from '../../../application/useCases/getDeliveryStatus.useCase';
 
 export class DeliveriesController {
-    // TODO: Aprender esto
     constructor(
         private readonly createDeliveryUseCase: CreateDeliveryUseCase,
         private readonly getDeliveryStatusUseCase: GetDeliveryStatusUseCase
@@ -24,11 +23,7 @@ export class DeliveriesController {
             }
 
             const label = await this.createDeliveryUseCase.execute(input);
-            console.log('Delivery created successfully:', label);
-            return reply.code(201).send({
-                success: true,
-                data: label
-            });
+            return reply.code(201).send(label);
         } catch (err: any) {
             console.error('Error creating delivery:', err);
 
@@ -75,10 +70,7 @@ export class DeliveriesController {
 
             const deliveryStatus = await this.getDeliveryStatusUseCase.execute({ deliveryId: id });
 
-            return reply.code(200).send({
-                success: true,
-                data: deliveryStatus
-            });
+            return reply.code(200).send(deliveryStatus);
         } catch (err: any) {
             console.error('Error getting delivery status:', err);
 

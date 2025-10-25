@@ -41,12 +41,9 @@ export class DeliveryPollingService {
     }
 
     private async pollDeliveries(): Promise<void> {
-        console.log('Polling deliveries for status updates...');
-
         const pollableDeliveryStatuses = [DeliveryStatus.PENDING, DeliveryStatus.CONFIRMED, DeliveryStatus.IN_TRANSIT];
-
+        // TODO: Create repository call to find deliveries by status and provider type
         const deliveries = await this.deliveryRepository.findByStatus(pollableDeliveryStatuses);
-        console.log(`Found ${deliveries.length} deliveries to poll`);
 
         for (const delivery of deliveries) {
             const provider = this.shippingProviders.find(p => p.getName() === delivery.provider);

@@ -44,23 +44,17 @@ const deliveriesRoutes: FastifyPluginAsync = async (app) => {
                 201: {
                     type: 'object',
                     properties: {
-                        success: { type: 'boolean' },
-                        data: {
-                            type: 'object',
-                            properties: {
-                                deliveryId: { type: 'string' },
-                                orderId: { type: 'string' },
-                                provider: { type: 'string' },
-                                labelUrl: { type: 'string' },
-                                trackingNumber: { type: 'string' },
-                                estimatedDelivery: { type: 'string', format: 'date-time' },
-                                status: { type: 'string' }
-                            }
-                        }
+                        deliveryId: { type: 'string' },
+                        orderId: { type: 'string' },
+                        provider: { type: 'string' },
+                        labelUrl: { type: 'string' },
+                        trackingNumber: { type: 'string' },
+                        estimatedDelivery: { type: 'string', format: 'date-time' },
+                        status: { type: 'string' }
                     }
-                }
-            }
-        }
+                },
+            },
+        },
     }, controller.create);
 
     app.get('/:id/status', {
@@ -81,19 +75,13 @@ const deliveriesRoutes: FastifyPluginAsync = async (app) => {
                 200: {
                     type: 'object',
                     properties: {
-                        success: { type: 'boolean' },
-                        data: {
-                            type: 'object',
-                            properties: {
-                                deliveryId: { type: 'string' },
-                                orderId: { type: 'string' },
-                                provider: { type: 'string' },
-                                status: { type: 'string' },
-                                labelUrl: { type: 'string' },
-                                createdAt: { type: 'string', format: 'date-time' },
-                                updatedAt: { type: 'string', format: 'date-time' }
-                            }
-                        }
+                        deliveryId: { type: 'string' },
+                        orderId: { type: 'string' },
+                        provider: { type: 'string' },
+                        status: { type: 'string' },
+                        labelUrl: { type: 'string' },
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' }
                     }
                 },
                 404: {
