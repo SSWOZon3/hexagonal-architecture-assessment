@@ -47,6 +47,7 @@ export class CreateDeliveryUseCase {
             id: this.idProvider.newDeliveryId(),
             orderId: orderId,
             provider: shippingLabel.provider,
+            trackingNumber: shippingLabel.trackingNumber,
             status: DeliveryStatus.CONFIRMED,
             labelUrl: shippingLabel.labelUrl,
             shippingAddress: input.shippingAddress,
@@ -60,7 +61,7 @@ export class CreateDeliveryUseCase {
             orderId: delivery.orderId.toString(),
             provider: delivery.provider,
             labelUrl: delivery.labelUrl,
-            trackingNumber: shippingLabel.trackingNumber,
+            trackingNumber: delivery.trackingNumber,
             estimatedDelivery: shippingLabel.estimatedDelivery,
             status: delivery.status
         };

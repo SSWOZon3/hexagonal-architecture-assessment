@@ -3,9 +3,8 @@ import { DeliveryId } from '../../domain/value-objects/DeliveryId';
 import { DeliveryStatus } from '../../domain/entities/Delivery';
 
 export interface UpdateDeliveryStatusInput {
-    deliveryId: string;
+    deliveryId: DeliveryId;
     status: DeliveryStatus;
-    provider: string;
 }
 
 export interface UpdateDeliveryStatusOutput {
@@ -19,9 +18,7 @@ export class UpdateDeliveryStatusUseCase {
     constructor(private readonly deliveryRepository: DeliveryRepository) { }
 
     async execute(input: UpdateDeliveryStatusInput): Promise<UpdateDeliveryStatusOutput> {
-        const deliveryId = DeliveryId.fromString(input.deliveryId);
-
-        const delivery = await this.deliveryRepository.findById(deliveryId);
+        const delivery = await this.deliveryRepository.findById(input.deliveryId);
 
         if (!delivery) {
             throw new Error(`Delivery with id ${input.deliveryId} not found`);

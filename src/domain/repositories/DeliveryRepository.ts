@@ -7,6 +7,7 @@ export interface DeliveryRepository {
     save(delivery: Delivery): Promise<void>;
     findById(id: DeliveryId): Promise<Delivery | null>;
     findByOrderId(orderId: OrderId): Promise<Delivery | null>;
+    findByTrackingNumber(trackingNumber: string): Promise<Delivery | null>;
     findAll(): Promise<Delivery[]>;
     findByStatus(statuses: DeliveryStatus[]): Promise<Delivery[]>;
 }

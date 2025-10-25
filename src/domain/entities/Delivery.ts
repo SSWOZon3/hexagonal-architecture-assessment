@@ -8,6 +8,7 @@ export interface DeliveryProps {
     id: DeliveryId;
     orderId: OrderId;
     provider: string;
+    trackingNumber: string;
     status: DeliveryStatus;
     labelUrl: string;
     shippingAddress: Address;
@@ -56,6 +57,7 @@ export class Delivery {
         id: string;
         orderId: string;
         provider: string;
+        trackingNumber: string;
         status: DeliveryStatus;
         labelUrl: string;
         shippingAddress: Address;
@@ -67,6 +69,7 @@ export class Delivery {
             id: DeliveryId.fromString(props.id),
             orderId: new OrderId(props.orderId),
             provider: props.provider,
+            trackingNumber: props.trackingNumber,
             status: props.status,
             labelUrl: props.labelUrl,
             shippingAddress: props.shippingAddress,
@@ -86,6 +89,10 @@ export class Delivery {
 
     get provider(): string {
         return this.props.provider;
+    }
+
+    get trackingNumber(): string {
+        return this.props.trackingNumber;
     }
 
     get status(): DeliveryStatus {
@@ -121,6 +128,7 @@ export class Delivery {
         id: string;
         orderId: string;
         provider: string;
+        trackingNumber: string;
         status: DeliveryStatus;
         labelUrl: string;
         shippingAddress: Address;
@@ -132,6 +140,7 @@ export class Delivery {
             id: this.id.toString(),
             orderId: this.orderId.toString(),
             provider: this.provider,
+            trackingNumber: this.trackingNumber,
             status: this.status,
             labelUrl: this.labelUrl,
             shippingAddress: this.shippingAddress,
