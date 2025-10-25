@@ -1,20 +1,25 @@
 import { CreateDeliveryUseCase } from '../../application/useCases/createDelivery.useCase';
 import { GetDeliveryStatusUseCase } from '../../application/useCases/getDeliveryStatus.useCase';
 import { UpdateDeliveryStatusUseCase } from '../../application/useCases/updateDeliveryStatus.useCase';
+import { ProcessWebhookDeliveryStatusUseCase } from '../../application/useCases/processWebhookDeliveryStatus.useCase';
 import { MongoDeliveryRepository } from '../repositories/MongoDeliveryRepository';
-import { ShippingProviderSelector as ShippingProviderSelectorAdapter } from '../services/shippingProviders/ShippingProviderSelector';
+import { ShippingProviderSelector as ShippingProviderSelectorAdapter } from '../adapters/shippingProviders/ShippingProviderSelector';
 import { ShippingProviderSelector } from '../../application/ports/ShippingProviderSelector';
 import { MongoObjectIdProvider } from '../ids/MongoObjectIdProvider';
 import { IdProvider } from '../../application/ports/IdProvider';
 import { DeliveryRepository } from '../../domain/repositories/DeliveryRepository';
-import { DeliveryPollingService } from '../services/DeliveryPollingService';
+import { DeliveryPollingService } from '../adapters/DeliveryPollingService';
 
 export type AppContainer = {
+    repositories: {
+        deliveryRepository: DeliveryRepository;
+    };
     useCases: {
         deliveries: {
             createDeliveryUseCase: CreateDeliveryUseCase;
             getDeliveryStatusUseCase: GetDeliveryStatusUseCase;
             updateDeliveryStatusUseCase: UpdateDeliveryStatusUseCase;
+            processWebhookDeliveryStatusUseCase: ProcessWebhookDeliveryStatusUseCase;
         };
     };
     services: {
@@ -43,7 +48,11 @@ export function buildContainer(): AppContainer {
         deliveryRepository
     );
 
-    // Get all shipping providers for polling service
+    const processWebhookDeliveryStatusUseCase = new ProcessWebhookDeliveryStatusUseCase(
+        deliveryRepository,
+        updateDeliveryStatusUseCase
+    );
+
     const shippingProviders = providerSelector.getAllProviders();
 
     const deliveryPollingService = new DeliveryPollingService(
@@ -53,11 +62,15 @@ export function buildContainer(): AppContainer {
     );
 
     return {
+        repositories: {
+            deliveryRepository
+        },
         useCases: {
             deliveries: {
                 createDeliveryUseCase,
                 getDeliveryStatusUseCase,
-                updateDeliveryStatusUseCase
+                updateDeliveryStatusUseCase,
+                processWebhookDeliveryStatusUseCase
             },
         },
         services: {

@@ -48,7 +48,6 @@ export class DeliveryPollingService {
         const deliveries = await this.deliveryRepository.findByStatus(pollableDeliveryStatuses);
         console.log(`Found ${deliveries.length} deliveries to poll`);
 
-        // Poll each delivery directly
         for (const delivery of deliveries) {
             const provider = this.shippingProviders.find(p => p.getName() === delivery.provider);
 
@@ -57,25 +56,23 @@ export class DeliveryPollingService {
             }
 
             try {
-                const trackingStatus = await provider.getTrackingStatus(delivery.id.toString());
+                const trackingStatus = await provider.getTrackingStatus(delivery.trackingNumber);
 
-                // Update status if it has changed
                 if (trackingStatus.status !== delivery.status) {
                     console.log(
-                        `Updating delivery ${delivery.id.toString()} status: ${delivery.status} -> ${trackingStatus.status}`
+                        `Updating delivery ${delivery.trackingNumber} status: ${delivery.status} -> ${trackingStatus.status}`
                     );
 
                     await this.updateDeliveryStatusUseCase.execute({
-                        deliveryId: delivery.id.toString(),
-                        status: trackingStatus.status,
-                        provider: provider.getName()
+                        deliveryId: delivery.id,
+                        status: trackingStatus.status
                     });
                 } else {
-                    console.log(`No status change for delivery ${delivery.id.toString()}`);
+                    console.log(`No status change for delivery ${delivery.trackingNumber}`);
                 }
 
             } catch (error) {
-                console.error(`Error polling delivery ${delivery.id.toString()}:`, error);
+                console.error(`Error polling delivery ${delivery.trackingNumber}:`, error);
             }
         }
     }
