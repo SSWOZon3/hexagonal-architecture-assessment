@@ -1,8 +1,5 @@
-// src/domain/entities/Delivery.ts
-import { v4 as uuidv4 } from 'uuid';
 import { DeliveryId } from '../value-objects/DeliveryId';
 import { OrderId } from '../value-objects/OrderId';
-import { IdProvider } from '../../application/ports/IdProvider';
 
 export interface DeliveryProps {
     id: DeliveryId;

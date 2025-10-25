@@ -16,7 +16,6 @@ export class DeliveriesController {
         try {
             const input = req.body as CreateDeliveryInput;
 
-            // Validate required fields
             if (!input.orderId || !input.shippingAddress || !input.customerInfo) {
                 return reply.code(400).send({
                     error: 'BAD_REQUEST',
@@ -33,6 +32,8 @@ export class DeliveriesController {
         } catch (err: any) {
             console.error('Error creating delivery:', err);
 
+            // TODO: Improve error handling based on error types in Domain/Application layers
+            //       and create a middleware for error handling
             if (err.message.includes('already exists')) {
                 return reply.code(409).send({
                     error: 'CONFLICT',

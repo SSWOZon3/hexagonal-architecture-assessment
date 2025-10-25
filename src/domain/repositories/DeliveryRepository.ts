@@ -1,4 +1,3 @@
-// src/domain/repositories/DeliveryRepository.ts
 import { Delivery, DeliveryStatus } from '../entities/Delivery';
 import { DeliveryId } from '../value-objects/DeliveryId';
 import { OrderId } from '../value-objects/OrderId';

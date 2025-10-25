@@ -1,11 +1,11 @@
-// src/infrastructure/db/mongo/schemas/DeliverySchema.ts
 import { Schema, model, Document } from 'mongoose';
-import { DeliveryProps, DeliveryStatus } from '../../../../domain/entities/Delivery';
+import { DeliveryStatus } from '../../../../domain/entities/Delivery';
 
 export interface DeliveryDocument extends Document {
     id: string;
     orderId: string;
     provider: string;
+    trackingNumber: string;
     status: DeliveryStatus;
     labelUrl: string;
     shippingAddress: {
@@ -40,6 +40,11 @@ const deliverySchema = new Schema<DeliveryDocument>({
         required: true,
         enum: ['NRW', 'TLS']
     },
+    trackingNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
     status: {
         type: String,
         required: true,
@@ -71,5 +76,6 @@ const deliverySchema = new Schema<DeliveryDocument>({
 deliverySchema.index({ orderId: 1 });
 deliverySchema.index({ status: 1 });
 deliverySchema.index({ provider: 1 });
+deliverySchema.index({ trackingNumber: 1 });
 
 export const DeliveryModel = model<DeliveryDocument>('Delivery', deliverySchema);

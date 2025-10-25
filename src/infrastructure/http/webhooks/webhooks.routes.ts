@@ -1,8 +1,12 @@
 import { FastifyPluginAsync } from 'fastify';
 import { WebhooksController } from './webhooks.controller';
 
+// TODO: Add middleware validator for webhook signatures calling /application/policies/WebhookSignatureValidator.ts
 const webhooksRoutes: FastifyPluginAsync = async (app) => {
-    const controller = new WebhooksController();
+    const container = app.container;
+    const controller = new WebhooksController(
+        container.useCases.deliveries.processWebhookDeliveryStatusUseCase
+    );
 
     app.post('/delivery-status', {
         schema: {
@@ -10,20 +14,16 @@ const webhooksRoutes: FastifyPluginAsync = async (app) => {
             tags: ['Webhooks'],
             body: {
                 type: 'object',
-                required: ['deliveryId', 'status', 'provider'],
+                required: ['trackingNumber', 'status'],
                 properties: {
-                    deliveryId: {
+                    trackingNumber: {
                         type: 'string',
-                        description: 'Delivery ID to update'
+                        description: 'Tracking number to identify the delivery'
                     },
                     status: {
                         type: 'string',
                         description: 'New delivery status',
                         enum: ['PENDING', 'CONFIRMED', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED']
-                    },
-                    provider: {
-                        type: 'string',
-                        description: 'Shipping provider name'
                     },
                     timestamp: {
                         type: 'string',
@@ -41,7 +41,14 @@ const webhooksRoutes: FastifyPluginAsync = async (app) => {
                     type: 'object',
                     properties: {
                         success: { type: 'boolean' },
-                        message: { type: 'string' }
+                        message: { type: 'string' },
+                        deliveryId: { type: 'string' },
+                        orderId: { type: 'string' },
+                        trackingNumber: { type: 'string' },
+                        provider: { type: 'string' },
+                        previousStatus: { type: 'string' },
+                        updatedStatus: { type: 'string' },
+                        noChange: { type: 'boolean' }
                     }
                 },
                 400: {

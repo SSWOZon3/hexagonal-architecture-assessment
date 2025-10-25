@@ -1,4 +1,3 @@
-// src/infrastructure/adapters/NRWShippingProvider.ts
 import { ShippingProvider, ShippingLabel, ShippingRequest, ProviderType, TrackingStatus } from '../../../application/ports/ShippingProvider';
 import { DeliveryStatus } from '../../../domain/entities/Delivery';
 

@@ -1,4 +1,3 @@
-// src/infrastructure/repositories/MongoDeliveryRepository.ts
 import { DeliveryRepository } from '../../domain/repositories/DeliveryRepository';
 import { Delivery } from '../../domain/entities/Delivery';
 import { DeliveryId } from '../../domain/value-objects/DeliveryId';
@@ -14,6 +13,7 @@ export class MongoDeliveryRepository implements DeliveryRepository {
                 id: deliveryData.id,
                 orderId: deliveryData.orderId,
                 provider: deliveryData.provider,
+                trackingNumber: deliveryData.trackingNumber,
                 status: deliveryData.status,
                 labelUrl: deliveryData.labelUrl,
                 shippingAddress: deliveryData.shippingAddress,
@@ -29,6 +29,7 @@ export class MongoDeliveryRepository implements DeliveryRepository {
                     {
                         $set: {
                             provider: deliveryData.provider,
+                            trackingNumber: deliveryData.trackingNumber,
                             status: deliveryData.status,
                             labelUrl: deliveryData.labelUrl,
                             shippingAddress: deliveryData.shippingAddress,
@@ -53,6 +54,11 @@ export class MongoDeliveryRepository implements DeliveryRepository {
         return deliveryDoc ? this.toDomainEntity(deliveryDoc) : null;
     }
 
+    async findByTrackingNumber(trackingNumber: string): Promise<Delivery | null> {
+        const deliveryDoc = await DeliveryModel.findOne({ trackingNumber }).exec();
+        return deliveryDoc ? this.toDomainEntity(deliveryDoc) : null;
+    }
+
     async findAll(): Promise<Delivery[]> {
         const deliveryDocs = await DeliveryModel.find().exec();
         return deliveryDocs.map(doc => this.toDomainEntity(doc));
@@ -70,6 +76,7 @@ export class MongoDeliveryRepository implements DeliveryRepository {
             id: deliveryDoc.id,
             orderId: deliveryDoc.orderId,
             provider: deliveryDoc.provider,
+            trackingNumber: deliveryDoc.trackingNumber,
             status: deliveryDoc.status,
             labelUrl: deliveryDoc.labelUrl,
             shippingAddress: deliveryDoc.shippingAddress,

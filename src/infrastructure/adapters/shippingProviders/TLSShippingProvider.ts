@@ -1,4 +1,3 @@
-// src/infrastructure/adapters/TLSShippingProvider.ts
 import { ShippingProvider, ShippingLabel, ShippingRequest, ProviderType } from '../../../application/ports/ShippingProvider';
 
 export class TLSShippingProvider implements ShippingProvider {
