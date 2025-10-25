@@ -1,5 +1,5 @@
 // src/infrastructure/adapters/NRWShippingProvider.ts
-import { ShippingProvider, ShippingLabel, ShippingRequest, ProviderType, TrackingStatus } from '../../../domain/ports/ShippingProvider';
+import { ShippingProvider, ShippingLabel, ShippingRequest, ProviderType, TrackingStatus } from '../../../application/ports/ShippingProvider';
 import { DeliveryStatus } from '../../../domain/entities/Delivery';
 
 export class NRWShippingProvider implements ShippingProvider {
@@ -7,8 +7,8 @@ export class NRWShippingProvider implements ShippingProvider {
         return 'NRW';
     }
 
-    isAvailable(): boolean {
-        // Simulate random availability
+    async isAvailable(): Promise<boolean> {
+        await this.APIDelay();
         return Math.random() > 0.1; // 90% availability
     }
 
@@ -17,10 +17,8 @@ export class NRWShippingProvider implements ShippingProvider {
     }
 
     async generateLabel(request: ShippingRequest): Promise<ShippingLabel> {
-        // Simulate API call delay
-        await this.delay(100 + Math.random() * 200);
+        await this.APIDelay();
 
-        // Simulate potential API failure
         if (Math.random() < 0.05) { // 5% failure rate
             throw new Error('NRW API temporarily unavailable');
         }
@@ -38,20 +36,11 @@ export class NRWShippingProvider implements ShippingProvider {
     }
 
     async getTrackingStatus(deliveryId: string): Promise<TrackingStatus> {
-        // Simulate API call delay for polling
-        await this.delay(50 + Math.random() * 100);
+        await this.APIDelay();
 
-        // Simulate potential API failure
         if (Math.random() < 0.02) { // 2% failure rate
             throw new Error('NRW tracking API temporarily unavailable');
         }
-
-        // Simulate realistic status progression
-        const statusOptions: DeliveryStatus[] = [
-            DeliveryStatus.CONFIRMED,
-            DeliveryStatus.IN_TRANSIT,
-            DeliveryStatus.DELIVERED
-        ];
 
         // Higher probability for later statuses as time progresses
         const randomValue = Math.random();
@@ -73,7 +62,8 @@ export class NRWShippingProvider implements ShippingProvider {
         };
     }
 
-    private delay(ms: number): Promise<void> {
+    private APIDelay(): Promise<void> {
+        const ms = 10 + Math.random() * 200; // 10-200ms
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

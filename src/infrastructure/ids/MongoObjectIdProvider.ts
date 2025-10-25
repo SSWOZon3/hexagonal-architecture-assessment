@@ -1,4 +1,4 @@
-import { IdProvider } from '../../domain/ports/IdProvider';
+import { IdProvider } from '../../application/ports/IdProvider';
 import { DeliveryId } from '../../domain/value-objects/DeliveryId';
 import { Types } from 'mongoose';
 

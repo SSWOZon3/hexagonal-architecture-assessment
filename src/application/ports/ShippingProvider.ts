@@ -1,4 +1,4 @@
-import { Address, CustomerInfo, DeliveryStatus } from '../entities/Delivery';
+import { Address, CustomerInfo, DeliveryStatus } from '../../domain/entities/Delivery';
 
 export interface ShippingLabel {
     provider: string;
@@ -28,7 +28,7 @@ export enum ProviderType {
 export interface ShippingProvider {
     getName(): string;
     generateLabel(request: ShippingRequest): Promise<ShippingLabel>;
-    isAvailable(): boolean;
+    isAvailable(): Promise<boolean>;
     getProviderType(): ProviderType;
     getTrackingStatus?(deliveryId: string): Promise<TrackingStatus>;
 }

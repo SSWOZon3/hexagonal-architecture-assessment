@@ -1,5 +1,5 @@
 import { DeliveryRepository } from '../../domain/repositories/DeliveryRepository';
-import { ShippingProvider, ProviderType } from '../../domain/ports/ShippingProvider';
+import { ShippingProvider, ProviderType } from '../../application/ports/ShippingProvider';
 import { UpdateDeliveryStatusUseCase } from '../../application/useCases/updateDeliveryStatus.useCase';
 import { DeliveryStatus } from '../../domain/entities/Delivery';
 

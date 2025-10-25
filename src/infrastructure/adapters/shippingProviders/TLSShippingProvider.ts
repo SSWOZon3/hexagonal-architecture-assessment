@@ -1,13 +1,13 @@
 // src/infrastructure/adapters/TLSShippingProvider.ts
-import { ShippingProvider, ShippingLabel, ShippingRequest, ProviderType } from '../../../domain/ports/ShippingProvider';
+import { ShippingProvider, ShippingLabel, ShippingRequest, ProviderType } from '../../../application/ports/ShippingProvider';
 
 export class TLSShippingProvider implements ShippingProvider {
     getName(): string {
         return 'TLS';
     }
 
-    isAvailable(): boolean {
-        // Simulate random availability
+    async isAvailable(): Promise<boolean> {
+        await this.APIDelay();
         return Math.random() > 0.15; // 85% availability
     }
 
@@ -16,8 +16,7 @@ export class TLSShippingProvider implements ShippingProvider {
     }
 
     async generateLabel(request: ShippingRequest): Promise<ShippingLabel> {
-        // Simulate API call delay
-        await this.delay(150 + Math.random() * 300);
+        await this.APIDelay();
 
         // Simulate potential API failure
         if (Math.random() < 0.08) { // 8% failure rate
@@ -36,7 +35,8 @@ export class TLSShippingProvider implements ShippingProvider {
         };
     }
 
-    private delay(ms: number): Promise<void> {
+    private APIDelay(): Promise<void> {
+        const ms = 10 + Math.random() * 200;
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

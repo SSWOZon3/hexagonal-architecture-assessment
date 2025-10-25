@@ -3,9 +3,9 @@ import { GetDeliveryStatusUseCase } from '../../application/useCases/getDelivery
 import { UpdateDeliveryStatusUseCase } from '../../application/useCases/updateDeliveryStatus.useCase';
 import { MongoDeliveryRepository } from '../repositories/MongoDeliveryRepository';
 import { ShippingProviderSelector as ShippingProviderSelectorAdapter } from '../services/shippingProviders/ShippingProviderSelector';
-import { ShippingProviderSelector } from '../../domain/services/ShippingProviderSelector';
+import { ShippingProviderSelector } from '../../application/ports/ShippingProviderSelector';
 import { MongoObjectIdProvider } from '../ids/MongoObjectIdProvider';
-import { IdProvider } from '../../domain/ports/IdProvider';
+import { IdProvider } from '../../application/ports/IdProvider';
 import { DeliveryRepository } from '../../domain/repositories/DeliveryRepository';
 import { DeliveryPollingService } from '../services/DeliveryPollingService';
 
