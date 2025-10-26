@@ -403,3 +403,6 @@ docker-compose down -v
 docker system prune -f
 docker-compose up --build
 ```
+
+## My history of learning Hexagonal Architecture with DDD
+- Medium: [How I Unlearned Layered Architecture to Learn Hexagonal Architecture and DDD](https://medium.com/@carlosgarcia3535/how-i-unlearned-layered-architecture-to-learn-hexagonal-architecture-and-ddd-bd6e6b005227)
