@@ -72,10 +72,8 @@ const deliverySchema = new Schema<DeliveryDocument>({
     collection: 'deliveries'
 });
 
-// Create indexes for better performance
 deliverySchema.index({ orderId: 1 });
 deliverySchema.index({ status: 1 });
-deliverySchema.index({ provider: 1 });
 deliverySchema.index({ trackingNumber: 1 });
 
 export const DeliveryModel = model<DeliveryDocument>('Delivery', deliverySchema);
