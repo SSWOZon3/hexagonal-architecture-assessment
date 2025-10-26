@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: dogfy-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - dogfy-network
+  api:
+    build: .
+    container_name: dogfy-api
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/dogfy
+    depends_on:
+      - mongodb
+    networks:
+      - dogfy-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb_data:
+
+networks:
+  dogfy-network:
+    driver: bridge
