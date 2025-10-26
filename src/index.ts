@@ -113,7 +113,6 @@ process.on('SIGINT', async () => {
     }
 });
 
-// TODO: Para qué
 if (require.main === module) {
     start();
 }
