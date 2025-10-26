@@ -17,7 +17,7 @@ docker-compose up --build
 ### 2. Verify it's Working
 - **API**: http://localhost:3003
 - **Swagger Documentation**: http://localhost:3003/docs
-- **MongoDB**: mongodb://localhost:27017/dogfy
+- **MongoDB**: mongodb://localhost:27020/dogfy
 
 ## 📝 Useful Docker Commands
 
@@ -41,6 +41,12 @@ docker-compose up --build api
 ## 🧪 Testing the API Features
 
 This microservice implements all the required features from the technical assessment. Here's how to test each one:
+
+### 📋 **Key Concept: deliveryId Usage**
+When you create a delivery, the response includes a `deliveryId`. **This is the ID you must use** to query the delivery status later:
+
+1. **Create Delivery** → Get `deliveryId` in response
+2. **Query Status** → Use that `deliveryId` in the URL path
 
 ### ✅ Feature 1: Handle Delivery Creation Requests
 
@@ -78,6 +84,8 @@ curl -X POST http://localhost:3003/deliveries \
 }
 ```
 
+**⚠️ Important:** Save the `deliveryId` from this response! You'll need it to query the delivery status later.
+
 **Create another delivery (may get different provider):**
 ```bash
 curl -X POST http://localhost:3003/deliveries \
@@ -114,10 +122,13 @@ curl -X POST http://localhost:3003/deliveries \
 
 ### ✅ Feature 2: Query Real-time Delivery Status
 
-**Get delivery status by ID:**
+**Get delivery status using the deliveryId from creation response:**
 ```bash
+# Use the deliveryId you got from the creation response above
 curl http://localhost:3003/deliveries/67123abc456def789ghi012j/status
 ```
+
+**💡 Tip:** Replace `67123abc456def789ghi012j` with the actual `deliveryId` you received when creating the delivery.
 
 **Expected Response:**
 ```json
@@ -220,7 +231,7 @@ docker-compose up --build
 
 **2. Create deliveries and capture IDs:**
 ```bash
-# Create first delivery
+# Create first delivery and extract the deliveryId from the response
 DELIVERY_1=$(curl -s -X POST http://localhost:3003/deliveries \
   -H "Content-Type: application/json" \
   -d '{
@@ -239,7 +250,9 @@ DELIVERY_1=$(curl -s -X POST http://localhost:3003/deliveries \
     }
   }' | jq -r '.deliveryId')
 
-# Create second delivery  
+echo "Created delivery with ID: $DELIVERY_1"
+
+# Create second delivery and extract its deliveryId too
 DELIVERY_2=$(curl -s -X POST http://localhost:3003/deliveries \
   -H "Content-Type: application/json" \
   -d '{
@@ -257,10 +270,13 @@ DELIVERY_2=$(curl -s -X POST http://localhost:3003/deliveries \
       "phone": "+0987654321"
     }
   }' | jq -r '.deliveryId')
+
+echo "Created delivery with ID: $DELIVERY_2"
 ```
 
-**3. Check initial status:**
+**3. Check initial status using the captured deliveryIds:**
 ```bash
+# Query status using the deliveryId from step 2
 curl http://localhost:3003/deliveries/$DELIVERY_1/status
 curl http://localhost:3003/deliveries/$DELIVERY_2/status
 ```
@@ -286,24 +302,6 @@ curl -X POST http://localhost:3003/webhooks/delivery-status \
 ```bash
 curl http://localhost:3003/deliveries/$DELIVERY_1/status
 curl http://localhost:3003/deliveries/$DELIVERY_2/status
-```
-
-## 🔧 Development Setup
-
-If you want to develop locally without Docker:
-
-```bash
-# Install dependencies
-npm install
-
-# Run local MongoDB
-docker run -d -p 27017:27017 --name mongodb mongo:7
-
-# Run in development mode
-npm run dev
-
-# Run tests
-npm test
 ```
 
 ## 🏗️ Architecture
@@ -404,13 +402,4 @@ docker-compose restart
 docker-compose down -v
 docker system prune -f
 docker-compose up --build
-```
-
-### Provider Integration Issues
-```bash
-# Check provider adapter logs
-docker-compose logs -f api | grep -i "provider\|shipping"
-
-# Test provider connectivity
-curl http://localhost:3003/docs  # Check Swagger for provider status
 ```
